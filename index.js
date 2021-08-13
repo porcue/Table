@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const department = document.querySelector('.department');
   const button = document.querySelector('.button');
   const table = document.createElement('table');
+  const tableBody = document.createElement('tbody');
   const error = document.querySelector('.error');
   const inputs = document.querySelectorAll('.student');
   const date = new Date();
@@ -75,82 +76,72 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function filterStudentName() {
-    for (let i = 1; i < table.children.length; i++) {
-      if (table.children[i].children[0].textContent.search(filterName.value.trim()) == -1) {
-        table.children[i].classList.add('hide');
-      }else{
-        table.children[i].classList.remove('hide');
+    const array = Array.from(tableBody.children);
+    array.filter((el) => {
+      if (el.children[0].textContent.search(filterName.value) == -1) {
+        el.classList.add('hide');
+      } else {
+        el.classList.remove('hide');
       }
-    }
+    });
   }
 
   function filterStudentDepartment() {
-    for (let i = 1; i < table.children.length; i++) {
-      if (table.children[i].children[1].textContent.search(filterName.value.trim()) == -1) {
-        table.children[i].classList.add('hide');
-      }else{
-        table.children[i].classList.remove('hide');
+    const array = Array.from(tableBody.children);
+    array.filter((el) => {
+      if (el.children[1].textContent.search(filterDepartment.value) == -1) {
+        el.classList.add('hide');
+      } else {
+        el.classList.remove('hide');
       }
-    }
+    });
   }
 
   function filterStudentYears() {
-    for (let i = 1; i < table.children.length; i++) {
-      if (table.children[i].children[3].textContent.search(filterName.value.trim()) == -1) {
-        table.children[i].classList.add('hide');
-      }else{
-        table.children[i].classList.remove('hide');
+    const array = Array.from(tableBody.children);
+    array.filter((el) => {
+      if (+el.children[3].textContent.search(filterYear.value) == -1) {
+        el.classList.add('hide');
+      } else {
+        el.classList.remove('hide');
       }
-    }
-  }
-
-  function insertAfter(el, ref) {
-    return ref.parentNode.insertBefore(el, ref.nextSibling);
+    });
   }
 
   function sortName() {
-    console.log(table.children[1].children[0].textContent);
-    for (let i = 1; i < table.children.length; i++) {
-      for (let j = i; j < table.children.length; j++) {
-        if (table.children[j].children[0].textContent.split(' ').join('') < table.children[i].children[0].textContent.split(' ').join('')) {
-          replacedNode = table.replaceChild(table.children[j], table.children[i]);
-          insertAfter(replacedNode, table.children[i]);
-        }
-      }
-    }
+    const array = Array.from(tableBody.children);
+    array.sort((a, b) => ((a.children[0].textContent <= b.children[0].textContent) ? -1 : 1));
+    tableBody.innerHTML = '';
+    array.forEach((el) => {
+      tableBody.append(el);
+    });
   }
 
   function sortDepartment() {
-    for (let i = 1; i < table.children.length; i++) {
-      for (let j = i; j < table.children.length; j++) {
-        if (table.children[j].children[1].textContent < table.children[i].children[1].textContent) {
-          replacedNode = table.replaceChild(table.children[j], table.children[i]);
-          insertAfter(replacedNode, table.children[i]);
-        }
-      }
-    }
+    const array = Array.from(tableBody.children);
+    array.sort((a, b) => ((a.children[1].textContent <= b.children[1].textContent) ? -1 : 1));
+    tableBody.innerHTML = '';
+    array.forEach((el) => {
+      tableBody.append(el);
+    });
   }
 
   function sortBirth() {
-    for (let i = 1; i < table.children.length; i++) {
-      for (let j = i; j < table.children.length; j++) {
-        if (table.children[j].children[2].getAttribute('data') < table.children[i].children[2].getAttribute('data')) {
-          replacedNode = table.replaceChild(table.children[j], table.children[i]);
-          insertAfter(replacedNode, table.children[i]);
-        }
-      }
-    }
+    const array = Array.from(tableBody.children);
+    array.sort((a, b) => ((a.children[2].getAttribute('data') <= b.children[2].getAttribute('data')) ? -1 : 1));
+    tableBody.innerHTML = '';
+    array.forEach((el) => {
+      tableBody.append(el);
+    });
   }
 
   function sortYear() {
-    for (let i = 1; i < table.children.length; i++) {
-      for (let j = i; j < table.children.length; j++) {
-        if (parseInt(table.children[j].children[3].textContent) < parseInt(table.children[i].children[3].textContent)) {
-          replacedNode = table.replaceChild(table.children[j], table.children[i]);
-          insertAfter(replacedNode, table.children[i]);
-        }
-      }
-    }
+    const array = Array.from(tableBody.children);
+    array.sort((a, b) => ((parseInt(a.children[3].textContent) <= parseInt(b.children[3].textContent)) ? -1 : 1));
+    tableBody.innerHTML = '';
+    array.forEach((el) => {
+      tableBody.append(el);
+    });
   }
 
   function dataOfStudent(name, depart, birth, year) {
@@ -181,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   (function createTable() {
+    const thead = document.createElement('thead');
     const tr = document.createElement('tr');
     th1 = document.createElement('th');
     th1.textContent = 'ФИО СТУДЕНТА';
@@ -191,15 +183,10 @@ document.addEventListener('DOMContentLoaded', () => {
     th4 = document.createElement('th');
     th4.textContent = 'ГОДЫ ОБУЧЕНИЯ И НОМЕР КУРСА';
     tr.append(th1, th2, th3, th4);
-    table.append(tr);
+    thead.append(tr);
+    table.append(thead);
+    table.append(tableBody);
     document.body.append(table);
-    return {
-      tr,
-      th1,
-      th2,
-      th3,
-      th4,
-    };
   }());
 
   function createStudent() {
@@ -243,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('students', JSON.stringify(arr));
     });
 
-    table.append(task);
+    tableBody.append(task);
 
     const values = document.querySelectorAll('input');
     values.forEach((el) => {
@@ -258,14 +245,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   (function getStorage() {
     if (arr.length > 0) {
-      document.body.append(table);
+      document.body.append(filterWrapper, table);
+      filterWrapper.classList.add('appear');
       arr.forEach((element) => {
         const showStorage = dataOfStudent(element.name, element.department, element.birth, element.year).tr2;
-        table.append(showStorage);
+        tableBody.append(showStorage);
         th1.addEventListener('click', sortName);
         th2.addEventListener('click', sortDepartment);
         th3.addEventListener('click', sortBirth);
         th4.addEventListener('click', sortYear);
+        filterName.addEventListener('input', filterStudentName);
+        filterDepartment.addEventListener('input', filterStudentDepartment);
+        filterYear.addEventListener('input', filterStudentYears);
       });
     }
   }());
